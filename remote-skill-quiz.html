@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Remote Skill</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F0E8;
+  --surface: #FDFAF4;
+  --surface2: #EDE8DC;
+  --border: rgba(60,45,20,0.12);
+  --border2: rgba(60,45,20,0.22);
+  --text: #1E1A10;
+  --muted: #6B6045;
+  --hint: #9E8E6A;
+  --accent: #C4622D;
+  --accent2: #E07B42;
+  --green: #2D7A4F;
+  --greenbg: #EBF5EF;
+  --purple: #5B4A8A;
+  --purplebg: #F0EDF8;
+  --teal: #1E7A72;
+  --tealbg: #E8F5F4;
+  --amber: #8A6A1E;
+  --amberbg: #F8F2E0;
+  --r: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 80px;
+}
+
+/* Texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero */
+.hero {
+  padding: 60px 0 48px;
+  text-align: center;
+}
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  padding: 6px 16px;
+  border: 1px solid rgba(196,98,45,0.3);
+  border-radius: 20px;
+  background: rgba(196,98,45,0.06);
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(36px, 7vw, 62px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero p {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 420px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+.start-btn {
+  display: inline-block;
+  background: var(--text);
+  color: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 16px 36px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+  letter-spacing: 0.01em;
+}
+.start-btn:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Progress */
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.progress-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-size: 12px;
+  color: var(--hint);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Question card */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 32px 28px;
+  margin-bottom: 16px;
+  animation: slideUp 0.35s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.q-number {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hint);
+  margin-bottom: 12px;
+}
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(20px, 3.5vw, 26px);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+
+/* Options */
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.option-btn {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'DM Sans', sans-serif;
+}
+.option-btn:hover {
+  border-color: var(--accent2);
+  background: rgba(196,98,45,0.04);
+  transform: translateX(3px);
+}
+.option-btn.selected {
+  border-color: var(--accent);
+  background: rgba(196,98,45,0.08);
+}
+.option-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.option-btn.selected .option-letter {
+  background: var(--accent);
+  color: white;
+}
+.option-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Nav buttons */
+.nav-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.btn-next {
+  flex: 1;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 50px;
+  padding: 14px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.btn-next.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.btn-next.active:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+.btn-back {
+  background: none;
+  border: 1.5px solid var(--border2);
+  border-radius: 50px;
+  padding: 14px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-back:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+/* Result */
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  animation: slideUp 0.4s ease;
+}
+.result-top {
+  padding: 32px 28px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.result-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.result-skill {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.result-why {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+  font-weight: 300;
+}
+.result-body {
+  padding: 24px 28px;
+}
+.result-section {
+  margin-bottom: 22px;
+}
+.result-section:last-child { margin-bottom: 0; }
+.rs-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hint);
+  margin-bottom: 10px;
+  display: block;
+}
+.rs-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+}
+.step-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.step-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.65;
+}
+.course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.course-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  gap: 10px;
+}
+.course-name {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+.course-platform {
+  font-size: 11px;
+  color: var(--hint);
+  margin-top: 1px;
+}
+.course-free {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--greenbg);
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.pay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.platforms-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.platform-tag {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--muted);
+}
+.retake-btn {
+  width: 100%;
+  background: none;
+  border: 1.5px solid var(--border2);
+  border-radius: 50px;
+  padding: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.15s;
+}
+.retake-btn:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+.selar-btn {
+  display: block;
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 10px;
+  transition: all 0.15s;
+}
+.selar-btn:hover {
+  background: #B0531F;
+  transform: translateY(-1px);
+}
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+/* Hidden */
+#quizWrap, #resultWrap { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LANDING -->
+  <div id="landingWrap">
+    <div class="hero">
+      <div class="hero-eyebrow">Free Career Tool</div>
+      <h1>Find your <em>remote skill</em> match</h1>
+      <p>Answer 6 honest questions. Get your best-fit remote skill — with exact steps on how to start from zero.</p>
+      <button class="start-btn" onclick="startQuiz()">Start the quiz →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizWrap" style="padding-top:40px">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-label" id="progressLabel">1 of 6</div>
+    </div>
+    <div id="qCardWrap"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultWrap" style="padding-top:40px">
+    <div id="resultContent"></div>
+    <button class="retake-btn" onclick="retake()">← Retake the quiz</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "When you imagine working remotely, what kind of day sounds most like you?",
+    options: [
+      { text: "Helping people solve problems and feel supported", tags: ["csr","chat"] },
+      { text: "Organising tasks, managing schedules, keeping things running smoothly", tags: ["va","pm"] },
+      { text: "Writing, crafting messages, creating content that connects", tags: ["copy","smm","email"] },
+      { text: "Designing visuals, editing videos, making things look good", tags: ["design","video"] },
+      { text: "Crunching numbers, spotting patterns, working with data", tags: ["data","bookkeeping"] },
+      { text: "Talking to people, building relationships, getting results", tags: ["setter","sales"] }
+    ]
+  },
+  {
+    text: "How would the people who know you best describe you?",
+    options: [
+      { text: "Patient, calm, good listener — people feel comfortable around me", tags: ["csr","chat","va"] },
+      { text: "Organised, reliable, detail-oriented — nothing falls through the cracks", tags: ["va","pm","bookkeeping"] },
+      { text: "Creative, expressive, always coming up with ideas", tags: ["copy","smm","design","video"] },
+      { text: "Analytical, logical, loves figuring things out", tags: ["data","bookkeeping"] },
+      { text: "Confident, persuasive, good at convincing people", tags: ["setter","sales","smm"] },
+      { text: "Adaptable, flexible, comfortable switching between tasks", tags: ["va","pm","chat"] }
+    ]
+  },
+  {
+    text: "Which of these activities would you genuinely enjoy doing every day?",
+    options: [
+      { text: "Responding to messages and helping people get what they need", tags: ["csr","chat","va"] },
+      { text: "Writing emails, captions, articles or marketing copy", tags: ["copy","email","smm"] },
+      { text: "Managing a calendar, inbox, files and to-do lists", tags: ["va","pm"] },
+      { text: "Creating graphics, editing videos or photos", tags: ["design","video"] },
+      { text: "Looking at spreadsheets, tracking numbers, making reports", tags: ["data","bookkeeping"] },
+      { text: "Reaching out to people, starting conversations, booking meetings", tags: ["setter","sales"] }
+    ]
+  },
+  {
+    text: "What is your current relationship with technology?",
+    options: [
+      { text: "Very comfortable — I pick up new tools and apps quickly", tags: ["data","pm","copy","email"] },
+      { text: "Comfortable enough — I can figure things out when I need to", tags: ["csr","chat","va","smm"] },
+      { text: "I use social media confidently and understand how it works", tags: ["smm","copy","design"] },
+      { text: "I am good with design or editing apps like Canva or CapCut", tags: ["design","video"] },
+      { text: "I am comfortable with Excel, Google Sheets or numbers", tags: ["data","bookkeeping"] },
+      { text: "I am still learning but willing to put in the effort", tags: ["csr","chat","setter","va"] }
+    ]
+  },
+  {
+    text: "What matters most to you in a remote job right now?",
+    options: [
+      { text: "Getting started quickly with minimal training needed", tags: ["csr","chat","setter","data"] },
+      { text: "Building a skill I can grow and charge more for over time", tags: ["copy","design","video","smm","data"] },
+      { text: "Flexible hours so I can work around my own schedule", tags: ["copy","smm","va","design","video"] },
+      { text: "Stable, consistent work with the same clients or employer", tags: ["csr","chat","va","bookkeeping","pm"] },
+      { text: "Earning commission or bonuses based on my performance", tags: ["setter","sales"] },
+      { text: "Doing creative work that I am proud of", tags: ["design","video","copy","smm"] }
+    ]
+  },
+  {
+    text: "Be honest — what is your biggest concern about starting remote work?",
+    options: [
+      { text: "I do not know which skill to focus on", tags: ["va","smm","copy"] },
+      { text: "I have no formal experience or qualifications", tags: ["csr","chat","setter","data"] },
+      { text: "I am not sure my English is strong enough", tags: ["data","design","video","bookkeeping"] },
+      { text: "I worry about finding clients or companies that will hire me", tags: ["copy","smm","design","video"] },
+      { text: "I do not know how to set up the tools or workspace", tags: ["va","pm","csr","chat"] },
+      { text: "I am afraid of rejection or failure", tags: ["setter","sales","smm","copy"] }
+    ]
+  }
+];
+
+const skills = {
+  csr: {
+    name: "Remote Customer Service Representative",
+    color: "#C4622D",
+    colorBg: "rgba(196,98,45,0.08)",
+    why: "Your answers show someone who is patient, people-focused, and calm under pressure. Customer service is built for people like you — and it is one of the fastest ways to get hired remotely with no prior experience.",
+    pay: "$300 – $1,200/month | Entry level with no experience",
+    payColor: "#C4622D",
+    payBg: "rgba(196,98,45,0.08)",
+    steps: [
+      "Create a Payoneer account to receive international payments",
+      "Set up a professional Gmail — firstname.lastname@gmail.com",
+      "Write a 3-sentence professional summary focused on your communication skills",
+      "Update your CV with a Remote Tools section — list Gmail, Zoom, WhatsApp Business",
+      "Apply to 5 roles daily: Teleperformance, Concentrix, TTEC, We Work Remotely",
+      "Follow up on every application on Day 6 with a short polite email"
+    ],
+    courses: [
+      { name: "Customer Service Training", platform: "HubSpot Academy", url: "https://academy.hubspot.com/courses/customer-service-training" },
+      { name: "Diploma in Customer Service", platform: "Alison", url: "https://alison.com/course/diploma-in-customer-service" },
+      { name: "Zendesk Foundations", platform: "Zendesk", url: "https://www.zendesk.com/training/" }
+    ],
+    platforms: ["Teleperformance", "Concentrix", "TTEC", "We Work Remotely", "Arise"]
+  },
+  chat: {
+    name: "Chat Support Agent",
+    color: "#1E7A72",
+    colorBg: "rgba(30,122,114,0.08)",
+    why: "You prefer written communication over phone calls and you work well under a calm, structured environment. Chat support is perfect — everything happens through text, no calls required, and fast typers earn more.",
+    pay: "$3 – $14/hour | Bonuses for speed and quality",
+    payColor: "#1E7A72",
+    payBg: "rgba(30,122,114,0.08)",
+    steps: [
+      "Test your typing speed at typingtest.com — aim for 40+ words per minute",
+      "Practice typing daily for 20 minutes if below 40 WPM",
+      "Install Grammarly free on your browser — it will catch errors in real time",
+      "Create a free Zendesk trial account and spend one hour exploring it",
+      "Build a CV that highlights written communication and multitasking",
+      "Apply to SupportYourApp, Concentrix, Arise and We Work Remotely"
+    ],
+    courses: [
+      { name: "Free Typing Course", platform: "Typing.com", url: "https://www.typing.com/student/lessons" },
+      { name: "Effective Communication Skills", platform: "Alison", url: "https://alison.com/course/effective-communication-skills-revised-2018" },
+      { name: "Customer Service Training", platform: "HubSpot Academy", url: "https://academy.hubspot.com/courses/customer-service-training" }
+    ],
+    platforms: ["SupportYourApp", "Concentrix", "Arise", "Influx", "Simply Hired"]
+  },
+  va: {
+    name: "Virtual Assistant",
+    color: "#5B4A8A",
+    colorBg: "rgba(91,74,138,0.08)",
+    why: "You are organised, reliable and comfortable managing multiple things at once. Virtual assistance rewards exactly those qualities — and the earning ceiling grows as you add more skills over time.",
+    pay: "$300 – $600/month starting | $10 – $25/hour as you grow",
+    payColor: "#5B4A8A",
+    payBg: "rgba(91,74,138,0.08)",
+    steps: [
+      "Set up Google Workspace — Gmail, Drive, Docs, Sheets, Calendar — all free",
+      "Download Trello and Notion and spend one hour exploring each",
+      "Create an Upwork profile listing every admin task you have ever done — even informal ones",
+      "Write a short bio on Upwork that leads with your organisational skills",
+      "Apply to 3 entry-level VA postings on Upwork and Time Etc daily",
+      "Create a Payoneer account to receive payment from international clients"
+    ],
+    courses: [
+      { name: "Working as a Virtual Assistant", platform: "Alison", url: "https://alison.com/course/working-as-a-virtual-assistant" },
+      { name: "Google Workspace Training", platform: "Google", url: "https://workspace.google.com/intl/en/learning-center/" },
+      { name: "Productivity & Organisation", platform: "Coursera", url: "https://www.coursera.org/learn/leveraging-virtual-assistants-for-personal-productivity" }
+    ],
+    platforms: ["Upwork", "Fiverr", "Time Etc", "Belay Solutions", "OnlineJobs.ph"]
+  },
+  smm: {
+    name: "Social Media Assistant",
+    color: "#C4622D",
+    colorBg: "rgba(196,98,45,0.08)",
+    why: "You understand social media naturally and enjoy creative work. Businesses are actively looking for people who can manage their pages consistently — and most small businesses have nobody doing this properly right now.",
+    pay: "$200 – $1,500/month per client | 2-3 clients = serious income",
+    payColor: "#C4622D",
+    payBg: "rgba(196,98,45,0.08)",
+    steps: [
+      "Download Canva free and create 3 sample posts for a fictional brand as your portfolio",
+      "Sign up for Buffer or Later — free scheduling tools used by professionals",
+      "Access Meta Business Suite and explore how it works",
+      "Create an Upwork profile with your sample posts as your portfolio",
+      "Find 3 small businesses near you with inactive social pages — offer to manage them",
+      "Screenshot every result and save it — your portfolio grows with every client"
+    ],
+    courses: [
+      { name: "Social Media Marketing Certification", platform: "HubSpot Academy", url: "https://academy.hubspot.com/courses/social-media" },
+      { name: "Meta Social Media Marketing Certificate", platform: "Coursera", url: "https://www.coursera.org/professional-certificates/facebook-social-media-marketing" },
+      { name: "Social Media Design", platform: "Canva Design School", url: "https://www.canva.com/learn/design-school/" }
+    ],
+    platforms: ["Upwork", "Fiverr", "LinkedIn Jobs", "Facebook Groups", "Direct outreach"]
+  },
+  copy: {
+    name: "Copywriter / Content Writer",
+    color: "#2D7A4F",
+    colorBg: "rgba(45,122,79,0.08)",
+    why: "You have a way with words and enjoy expressing ideas clearly. Copywriting and content writing are among the highest-paid remote skills — businesses need writers for websites, emails, ads, blogs and social media every single day.",
+    pay: "$10 – $50+/hour | Experienced writers earn $2,000 – $8,000/month",
+    payColor: "#2D7A4F",
+    payBg: "rgba(45,122,79,0.08)",
+    steps: [
+      "Start writing daily — even a short blog post or LinkedIn article counts as practice",
+      "Choose a niche you understand: health, finance, tech, business, lifestyle",
+      "Write 3 sample pieces in your chosen niche — these become your portfolio",
+      "Create profiles on Upwork and Fiverr with your samples",
+      "Install Grammarly and Hemingway App — free tools that improve your writing instantly",
+      "Pitch directly to small businesses in your niche who need better website copy"
+    ],
+    courses: [
+      { name: "Content Marketing Certification", platform: "HubSpot Academy", url: "https://academy.hubspot.com/courses/content-marketing" },
+      { name: "Introduction to Copywriting", platform: "Alison", url: "https://alison.com/course/introduction-to-copywriting" },
+      { name: "Fundamentals of Digital Marketing", platform: "Google", url: "https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing" }
+    ],
+    platforms: ["Upwork", "Fiverr", "Contently", "ProBlogger", "Direct client outreach"]
+  },
+  email: {
+    name: "Email Marketing Specialist",
+    color: "#8A6A1E",
+    colorBg: "rgba(138,106,30,0.08)",
+    why: "You are analytical and enjoy writing that has a clear purpose and measurable result. Email marketing sits at the intersection of both — every email you send has a goal and a result you can track.",
+    pay: "$500 – $2,000/month per client | High demand across all industries",
+    payColor: "#8A6A1E",
+    payBg: "rgba(138,106,30,0.08)",
+    steps: [
+      "Create a free Mailchimp account and explore how email campaigns are built",
+      "Study 10 marketing emails from brands you admire — note what makes them work",
+      "Write 3 sample email sequences for fictional businesses as your portfolio",
+      "Get HubSpot Email Marketing certified — free, recognised globally",
+      "Create profiles on Upwork and pitch to e-commerce brands needing email help",
+      "Set up a Payoneer account for receiving international client payments"
+    ],
+    courses: [
+      { name: "Email Marketing Certification", platform: "HubSpot Academy", url: "https://academy.hubspot.com/courses/email-marketing" },
+      { name: "Email Marketing Fundamentals", platform: "Mailchimp", url: "https://mailchimp.com/resources/email-marketing-field-guide/" },
+      { name: "Digital Marketing Fundamentals", platform: "Google", url: "https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing" }
+    ],
+    platforms: ["Upwork", "Fiverr", "LinkedIn", "Direct e-commerce brand outreach"]
+  },
+  design: {
+    name: "Graphic Designer",
+    color: "#5B4A8A",
+    colorBg: "rgba(91,74,138,0.08)",
+    why: "You have a strong visual sense and enjoy making things look good. Graphic design is one of the most in-demand remote skills globally — every brand, business and creator needs visuals consistently.",
+    pay: "$5 – $30/hour | Experienced designers earn $1,500 – $5,000/month",
+    payColor: "#5B4A8A",
+    payBg: "rgba(91,74,138,0.08)",
+    steps: [
+      "Start with Canva free — master it before moving to more advanced tools",
+      "Create 5 sample designs: social media posts, a flyer, a logo concept, a banner",
+      "Learn Adobe Express free — gives you more professional output than Canva",
+      "Build a simple portfolio on Behance — free platform used by design clients worldwide",
+      "Create a Fiverr gig offering social media graphics or logo design",
+      "Apply to graphic design roles on We Work Remotely and Upwork"
+    ],
+    courses: [
+      { name: "Graphic Design Basics", platform: "Canva Design School", url: "https://www.canva.com/learn/design-school/" },
+      { name: "Introduction to Graphic Design", platform: "Alison", url: "https://alison.com/course/introduction-to-graphic-design-revised" },
+      { name: "Fundamentals of Graphic Design", platform: "Coursera", url: "https://www.coursera.org/learn/fundamentals-of-graphic-design" }
+    ],
+    platforms: ["Fiverr", "Upwork", "99designs", "We Work Remotely", "Behance portfolio"]
+  },
+  video: {
+    name: "Video Editor",
+    color: "#1E7A72",
+    colorBg: "rgba(30,122,114,0.08)",
+    why: "You enjoy visual storytelling and have a good eye for how things flow. Video editing is exploding in demand — every content creator, business and brand needs edited video content and most cannot do it themselves.",
+    pay: "$5 – $25/hour | Content creator retainers: $300 – $1,500/month",
+    payColor: "#1E7A72",
+    payBg: "rgba(30,122,114,0.08)",
+    steps: [
+      "Start with CapCut — free, phone-based, used by millions of professional editors",
+      "Edit 3 sample videos using free footage from Pexels or Pixabay as your portfolio",
+      "Learn DaVinci Resolve free — industry-standard desktop editing software",
+      "Create a simple showreel — 60 seconds of your best edits — and post it on LinkedIn",
+      "Create a Fiverr gig offering short-form video editing for content creators",
+      "Reach out directly to YouTubers and Instagram creators who post consistently"
+    ],
+    courses: [
+      { name: "CapCut Video Editing — Beginners", platform: "YouTube", url: "https://www.youtube.com/results?search_query=capcut+video+editing+tutorial+beginners" },
+      { name: "DaVinci Resolve Free Course", platform: "YouTube", url: "https://www.youtube.com/results?search_query=davinci+resolve+beginners+full+course" },
+      { name: "Video Production Fundamentals", platform: "Coursera", url: "https://www.coursera.org/learn/video-production" }
+    ],
+    platforms: ["Fiverr", "Upwork", "Direct creator outreach", "We Work Remotely", "Social Growth Africa"]
+  },
+  data: {
+    name: "Data Entry Specialist",
+    color: "#2D7A4F",
+    colorBg: "rgba(45,122,79,0.08)",
+    why: "You are detail-oriented and comfortable working with information in an organised way. Data entry is one of the most accessible remote roles — straightforward, in high demand, and a strong starting point with no experience needed.",
+    pay: "$3 – $8/hour | Great first remote role with zero experience",
+    payColor: "#2D7A4F",
+    payBg: "rgba(45,122,79,0.08)",
+    steps: [
+      "Get comfortable with Google Sheets and Microsoft Excel — both free to learn",
+      "Practice typing speed at typingtest.com — aim for 40+ words per minute",
+      "Create a free Upwork profile highlighting accuracy, speed and attention to detail",
+      "Apply to data entry listings on Upwork, Freelancer and Remote.co",
+      "Take the free Excel course on Microsoft Learn — adds credibility to your profile",
+      "After 3 months, move toward data analysis roles with higher pay"
+    ],
+    courses: [
+      { name: "Google Sheets Full Course", platform: "Google", url: "https://workspace.google.com/intl/en/learning-center/products/sheets/" },
+      { name: "Excel Fundamentals", platform: "Microsoft Learn", url: "https://learn.microsoft.com/en-us/training/paths/excel-fundamentals/" },
+      { name: "Introduction to Microsoft Excel", platform: "Alison", url: "https://alison.com/course/introduction-to-microsoft-excel" }
+    ],
+    platforms: ["Upwork", "Freelancer", "Remote.co", "Indeed Remote", "Clickworker"]
+  },
+  setter: {
+    name: "Appointment Setter",
+    color: "#C4622D",
+    colorBg: "rgba(196,98,45,0.08)",
+    why: "You are confident, persuasive and not afraid to start conversations with strangers. Appointment setting rewards exactly that — and the commission structure means the more consistent you are, the more you earn.",
+    pay: "$3 – $6/hour base + $10 – $50 per qualified appointment booked",
+    payColor: "#C4622D",
+    payBg: "rgba(196,98,45,0.08)",
+    steps: [
+      "Optimise your LinkedIn profile — most outreach happens on LinkedIn and Instagram",
+      "Create a Google Sheet to track every person you contact daily",
+      "Learn the basics of lead qualification — what makes someone a good fit",
+      "Write a short, friendly outreach message: 3 sentences, clear ask, no pressure",
+      "Search 'remote appointment setter' on LinkedIn and Indeed and apply to 5 roles daily",
+      "Join Facebook groups specifically for remote appointment setter job postings"
+    ],
+    courses: [
+      { name: "Free Appointment Setter Training", platform: "Dial A Closer", url: "https://www.dialacloser.com/learn/free-appointment-setter-training-break-into-high-ticket-sales-without-experience" },
+      { name: "Sales Enablement Certification", platform: "HubSpot Academy", url: "https://academy.hubspot.com/courses/sales-enablement" },
+      { name: "LinkedIn for Sales", platform: "LinkedIn Learning", url: "https://www.linkedin.com/learning/" }
+    ],
+    platforms: ["LinkedIn Jobs", "Indeed", "Facebook Groups", "Upwork", "Direct outreach to coaches and agencies"]
+  },
+  bookkeeping: {
+    name: "Bookkeeper / Accounts Assistant",
+    color: "#8A6A1E",
+    colorBg: "rgba(138,106,30,0.08)",
+    why: "You are methodical, accurate and comfortable with numbers. Bookkeeping is one of the most underrated remote skills — every business needs it, few people want to do it, which means consistent demand and good pay.",
+    pay: "$10 – $25/hour | Monthly retainer clients: $300 – $800/month each",
+    payColor: "#8A6A1E",
+    payBg: "rgba(138,106,30,0.08)",
+    steps: [
+      "Create a free QuickBooks Online trial and spend 2 hours learning the basics",
+      "Learn Wave Accounting — completely free bookkeeping software used by small businesses",
+      "Take the free bookkeeping course on Alison to build your foundational knowledge",
+      "Offer to do bookkeeping for a small local business for free for one month to gain experience",
+      "Create an Upwork profile highlighting your attention to detail and number accuracy",
+      "Apply to remote bookkeeping roles on Upwork, Belay Solutions and Remote.co"
+    ],
+    courses: [
+      { name: "Bookkeeping Basics", platform: "Alison", url: "https://alison.com/course/bookkeeping-basics" },
+      { name: "QuickBooks Online Training", platform: "QuickBooks", url: "https://quickbooks.intuit.com/tutorials/" },
+      { name: "Accounting Fundamentals", platform: "Coursera", url: "https://www.coursera.org/learn/uva-darden-bcg-forecasting" }
+    ],
+    platforms: ["Upwork", "Belay Solutions", "Bookkeeper Launch", "Remote.co", "Direct small business outreach"]
+  },
+  pm: {
+    name: "Remote Project Coordinator",
+    color: "#5B4A8A",
+    colorBg: "rgba(91,74,138,0.08)",
+    why: "You are the person who naturally keeps track of everything and makes sure nothing is missed. Project coordination is perfect for people who are highly organised, good communicators and comfortable working across teams.",
+    pay: "$400 – $1,200/month | Grows quickly with experience",
+    payColor: "#5B4A8A",
+    payBg: "rgba(91,74,138,0.08)",
+    steps: [
+      "Learn Trello, Asana and Notion — all free — and understand how project boards work",
+      "Take the Google Project Management Certificate on Coursera — free to audit",
+      "Practice by organising a personal project using a proper project management tool",
+      "Build a CV that highlights coordination, communication and organisation skills",
+      "Apply to project coordinator and executive assistant roles on LinkedIn and We Work Remotely",
+      "Create a Payoneer account to receive international payments"
+    ],
+    courses: [
+      { name: "Google Project Management Certificate", platform: "Coursera", url: "https://www.coursera.org/professional-certificates/google-project-management" },
+      { name: "Project Management Fundamentals", platform: "Alison", url: "https://alison.com/course/project-management" },
+      { name: "Asana Academy", platform: "Asana", url: "https://academy.asana.com/" }
+    ],
+    platforms: ["LinkedIn Jobs", "We Work Remotely", "Remote.co", "Upwork", "Belay Solutions"]
+  }
+};
+
+// Scoring
+const tagMap = {
+  csr: 0, chat: 0, va: 0, smm: 0, copy: 0, email: 0,
+  design: 0, video: 0, data: 0, setter: 0, bookkeeping: 0, pm: 0
+};
+
+let answers = {};
+let scores = { ...tagMap };
+let currentQ = 0;
+
+function startQuiz() {
+  document.getElementById('landingWrap').style.display = 'none';
+  document.getElementById('quizWrap').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  updateProgress();
+  const letters = ['A','B','C','D','E','F'];
+  const opts = q.options.map((o, i) => `
+    <button class="option-btn ${answers[currentQ] === i ? 'selected' : ''}" onclick="selectOption(${i})">
+      <div class="option-letter">${letters[i]}</div>
+      <div class="option-text">${o.text}</div>
+    </button>
+  `).join('');
+
+  document.getElementById('qCardWrap').innerHTML = `
+    <div class="q-card">
+      <div class="q-number">Question ${currentQ + 1}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options-grid">${opts}</div>
+    </div>
+    <div class="nav-row">
+      ${currentQ > 0 ? `<button class="btn-back" onclick="goBack()">← Back</button>` : ''}
+      <button class="btn-next ${answers[currentQ] !== undefined ? 'active' : ''}" id="nextBtn" onclick="nextQuestion()">
+        ${currentQ < questions.length - 1 ? 'Next question →' : 'See my result →'}
+      </button>
+    </div>
+  `;
+}
+
+function selectOption(idx) {
+  answers[currentQ] = idx;
+  renderQuestion();
+}
+
+function updateProgress() {
+  const pct = ((currentQ) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${currentQ + 1} of ${questions.length}`;
+}
+
+function nextQuestion() {
+  if (answers[currentQ] === undefined) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    calculateResult();
+  }
+}
+
+function goBack() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function calculateResult() {
+  scores = { csr:0, chat:0, va:0, smm:0, copy:0, email:0, design:0, video:0, data:0, setter:0, bookkeeping:0, pm:0 };
+  Object.keys(answers).forEach(qIdx => {
+    const optIdx = answers[qIdx];
+    const tags = questions[qIdx].options[optIdx].tags;
+    tags.forEach(t => { if (scores[t] !== undefined) scores[t]++; });
+  });
+  const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  showResult(top);
+}
+
+function showResult(skillKey) {
+  document.getElementById('quizWrap').style.display = 'none';
+  document.getElementById('resultWrap').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const sk = skills[skillKey];
+  const stepsHtml = sk.steps.map((s, i) => `
+    <li class="step-item">
+      <div class="step-num">${i + 1}</div>
+      <div class="step-text">${s}</div>
+    </li>
+  `).join('');
+
+  const coursesHtml = sk.courses.map(c => `
+    <a href="${c.url}" class="course-item" target="_blank" style="text-decoration:none">
+      <div>
+        <div class="course-name">${c.name}</div>
+        <div class="course-platform">${c.platform}</div>
+      </div>
+      <div class="course-free">Free</div>
+    </a>
+  `).join('');
+
+  const platformsHtml = sk.platforms.map(p => `<span class="platform-tag">${p}</span>`).join('');
+
+  document.getElementById('resultContent').innerHTML = `
+    <div class="result-card">
+      <div class="result-top" style="background:${sk.colorBg}">
+        <div class="result-eyebrow" style="color:${sk.color}">Your remote skill match</div>
+        <div class="result-skill" style="color:${sk.color}">${sk.name}</div>
+        <div class="result-why">${sk.why}</div>
+      </div>
+      <div class="result-body">
+        <div class="result-section">
+          <span class="rs-label">What it pays</span>
+          <div class="pay-badge" style="background:${sk.payBg};color:${sk.payColor}">
+            💰 ${sk.pay}
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="result-section">
+          <span class="rs-label">Your step-by-step starting plan</span>
+          <ul class="step-list">${stepsHtml}</ul>
+        </div>
+        <div class="divider"></div>
+        <div class="result-section">
+          <span class="rs-label">Free courses to get you started</span>
+          <div class="course-list">${coursesHtml}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="result-section">
+          <span class="rs-label">Where to find work</span>
+          <div class="platforms-wrap">${platformsHtml}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function retake() {
+  answers = {};
+  scores = { csr:0, chat:0, va:0, smm:0, copy:0, email:0, design:0, video:0, data:0, setter:0, bookkeeping:0, pm:0 };
+  currentQ = 0;
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('quizWrap').style.display = 'block';
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
